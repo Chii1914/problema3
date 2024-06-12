@@ -8,6 +8,7 @@ const vendedorRoutes = require('./routes/vendedorRoutes');
 const compradorRoutes = require('./routes/compradorRoutes');
 const productoRoutes = require('./routes/productoRoutes');
 const tipoproductoRoutes = require('./routes/tipoProductoRoutes');
+const PORT = process.env.PORT || 6969;
 
 
 app.use(express.json());
@@ -64,13 +65,12 @@ app.get('/tipoproductos', async (req, res) => {
   try {
     const response = await axios.get(`http://localhost:${PORT}/api/tipoProducto`);
     const tipoProductos = response.data;
-    res.render('tableproducts', { tipoProductos });
+    res.render('tableproducts', { tipoProductos , port: PORT});
   } catch (error) {
     console.error(error);
     res.status(500).send('Error fetching tipoProductos');
   }
 });
-const PORT = process.env.PORT || 6969;
 
 sequelize.sync({ force: false }).then(() => {
   app.listen(PORT, () => {
