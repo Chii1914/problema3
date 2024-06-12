@@ -21,6 +21,9 @@ app.set('views', __dirname + '/views');
 app.get('/', (req, res) => {
   res.render('index', { title: 'My EJS Page', message: 'Hello, EJS!' });
 });
+app.get('/alo', (req, res) => {
+  res.render('alo');
+});
 const PORT = process.env.PORT || 6969;
 
 sequelize.sync({ force: false }).then(() => {
