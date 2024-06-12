@@ -13,11 +13,12 @@ app.use(express.json());
 app.use('/api/vendedores', vendedorRoutes);
 app.use('/api/compradores', compradorRoutes);
 app.use('/api/productos', productoRoutes);
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
-});
-app.set('view engine', 'ejs');
 
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
+app.get('/', (req, res) => {
+  res.render('index', { title: 'My EJS Page', message: 'Hello, EJS!' });
+});
 const PORT = process.env.PORT || 6969;
 
 sequelize.sync({ force: false }).then(() => {
