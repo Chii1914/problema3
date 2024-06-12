@@ -3,9 +3,125 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
+  <title>Lista de Vendedores</title>
+  <!-- Incluir Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-<body>
-  <h1><%= message %></h1>
+<body class="container mt-5">
+  <h1 class="mb-4">Lista de Vendedores</h1>
+
+  <!-- Formulario para agregar un nuevo vendedor -->
+  <form id="addVendedorForm" class="mb-4">
+    <div class="form-group">
+      <label for="nombreVendedor">Nombre del Vendedor:</label>
+      <input type="text" class="form-control" id="nombreVendedor" placeholder="Ingrese el nombre del vendedor" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Agregar Vendedor</button>
+  </form>
+
+  <!-- Tabla de vendedores -->
+  <table class="table table-striped table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="vendedores-table">
+      <!-- Los datos se cargarán aquí mediante JavaScript -->
+    </tbody>
+  </table>
+
+  <script>
+    // Obtener los datos de los vendedores y llenar la tabla
+    function fetchVendedores() {
+      fetch('http://localhost:6969/api/vendedores')
+        .then(response => response.json())
+        .then(vendedores => {
+          const table = document.getElementById('vendedores-table');
+          table.innerHTML = '';
+          if (vendedores && vendedores.length > 0) {
+            vendedores.forEach(vendedor => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${vendedor.numeroVendedor}</td>
+                <td>${vendedor.nombreVendedor}</td>
+                <td>
+                  <button class="btn btn-warning btn-sm" onclick="editVendedor(${vendedor.numeroVendedor}, '${vendedor.nombreVendedor}')">Editar</button>
+                  <button class="btn btn-danger btn-sm" onclick="deleteVendedor(${vendedor.numeroVendedor})">Eliminar</button>
+                </td>
+              `;
+              table.appendChild(row);
+            });
+          } else {
+            const row = document.createElement('tr');
+            row.innerHTML = '<td colspan="3">No hay vendedores registrados.</td>';
+            table.appendChild(row);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching vendedores:', error);
+          const row = document.createElement('tr');
+          row.innerHTML = '<td colspan="3" class="text-danger">Error fetching data.</td>';
+          document.getElementById('vendedores-table').appendChild(row);
+        });
+    }
+
+    // Función para agregar un nuevo vendedor
+    document.getElementById('addVendedorForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const nombreVendedor = document.getElementById('nombreVendedor').value;
+
+      fetch('http://localhost:6969/api/vendedores', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ nombreVendedor })
+      })
+      .then(response => response.json())
+      .then(() => {
+        document.getElementById('nombreVendedor').value = '';
+        fetchVendedores();
+      })
+      .catch(error => console.error('Error adding vendedor:', error));
+    });
+
+    // Función para editar un vendedor
+    function editVendedor(id, nombre) {
+      const newName = prompt('Ingrese el nuevo nombre del vendedor:', nombre);
+      if (newName) {
+        fetch(`http://localhost:6969/api/vendedores/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nombreVendedor: newName })
+        })
+        .then(() => fetchVendedores())
+        .catch(error => console.error('Error editing vendedor:', error));
+      }
+    }
+
+    // Función para eliminar un vendedor
+    function deleteVendedor(id) {
+      if (confirm('¿Está seguro de que desea eliminar este vendedor?')) {
+        fetch(`http://localhost:6969/api/vendedores/${id}`, {
+          method: 'DELETE'
+        })
+        .then(() => fetchVendedores())
+        .catch(error => console.error('Error deleting vendedor:', error));
+      }
+    }
+
+    // Cargar los vendedores al cargar la página
+    fetchVendedores();
+  </script>
+
+  <!-- Incluir Bootstrap JS (opcional) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
