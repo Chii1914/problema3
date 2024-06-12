@@ -10,7 +10,8 @@ Producto.init({
     references: {
       model: 'vendedor',
       key: 'numeroVendedor'
-    }
+    },
+    primaryKey: true // Composite primary key
   },
   idComprador: {
     type: DataTypes.INTEGER,
@@ -18,7 +19,8 @@ Producto.init({
     references: {
       model: 'comprador',
       key: 'idComprador'
-    }
+    },
+    primaryKey: true // Composite primary key
   },
   idTipoProducto: {
     type: DataTypes.INTEGER,
@@ -26,7 +28,8 @@ Producto.init({
     references: {
       model: 'tipoproducto',
       key: 'idTipoProducto'
-    }
+    },
+    primaryKey: true // Composite primary key
   },
   precioCompra: {
     type: DataTypes.INTEGER,
@@ -62,4 +65,3 @@ Producto.init({
 });
 
 module.exports = Producto;
-
