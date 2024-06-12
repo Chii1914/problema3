@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Tipo de Productos</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="mb-4">Tipo de Productos</h1>
+    <table class="table table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th>ID Tipo Producto</th>
+          <th>Descripción Producto</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% tipoProductos.forEach(tipoProducto => { %>
+          <tr>
+            <td><%= tipoProducto.idTipoProducto %></td>
+            <td><%= tipoProducto.descripcionProducto %></td>
+            <td>
+              <button class="btn btn-danger btn-sm" onclick="deleteProduct(<%= tipoProducto.idTipoProducto %>)">Eliminar</button>
+              <button class="btn btn-warning btn-sm" onclick="openUpdateModal(<%= tipoProducto.idTipoProducto %>, '<%= tipoProducto.descripcionProducto %>')">Actualizar</button>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <h2 class="mt-5">Agregar Producto</h2>
+    <form id="addProductForm" class="form-inline">
+      <div class="form-group mb-2">
+        <label for="idTipoProducto" class="sr-only">ID Tipo Producto:</label>
+        <input type="number" class="form-control" id="idTipoProducto" name="idTipoProducto" placeholder="ID Tipo Producto" required>
+      </div>
+      <div class="form-group mx-sm-3 mb-2">
+        <label for="descripcionProducto" class="sr-only">Descripción Producto:</label>
+        <input type="text" class="form-control" id="descripcionProducto" name="descripcionProducto" placeholder="Descripción Producto" required>
+      </div>
+      <button type="submit" class="btn btn-primary mb-2">Agregar</button>
+    </form>
+  </div>
+
+  <!-- The Modal -->
+  <div id="updateModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Actualizar Producto</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="updateProductForm">
+            <input type="hidden" id="updateIdTipoProducto">
+            <div class="form-group">
+              <label for="updateDescripcionProducto">Nueva Descripción:</label>
+              <input type="text" class="form-control" id="updateDescripcionProducto" name="updateDescripcionProducto" required>
+            </div>
+            <button type="submit" class="btn btn-warning">Actualizar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    document.getElementById('addProductForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+      const idTipoProducto = document.getElementById('idTipoProducto').value;
+      const descripcionProducto = document.getElementById('descripcionProducto').value;
+
+      try {
+        const response = await fetch('http://localhost:4001/api/tipoProducto', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ idTipoProducto, descripcionProducto }),
+        });
+
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          console.error('Error adding product');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+
+    async function deleteProduct(id) {
+      try {
+        const response = await fetch(`http://localhost:4001/api/tipoProducto/${id}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          console.error('Error deleting product');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function openUpdateModal(id, currentDescription) {
+      document.getElementById('updateIdTipoProducto').value = id;
+      document.getElementById('updateDescripcionProducto').value = currentDescription;
+      $('#updateModal').modal('show');
+    }
+
+    document.getElementById('updateProductForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+      const idTipoProducto = document.getElementById('updateIdTipoProducto').value;
+      const descripcionProducto = document.getElementById('updateDescripcionProducto').value;
+
+      try {
+        const response = await fetch(`http://localhost:4001/api/tipoProducto/${idTipoProducto}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ descripcionProducto }),
+        });
+
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          console.error('Error updating product');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  </script>
+</body>
+</html>

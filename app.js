@@ -59,6 +59,17 @@ app.get('/productos', async (req, res) => {
     res.status(500).send('Error fetching data');
   }
 });
+
+app.get('/tipoproductos', async (req, res) => {
+  try {
+    const response = await axios.get(`http://localhost:${PORT}/api/tipoProducto`);
+    const tipoProductos = response.data;
+    res.render('tableproducts', { tipoProductos });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error fetching tipoProductos');
+  }
+});
 const PORT = process.env.PORT || 6969;
 
 sequelize.sync({ force: false }).then(() => {
