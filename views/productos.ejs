@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Productos</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid black;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h1>Productos</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre Vendedor</th>
+        <th>Nombre Comprador</th>
+        <th>Descripción Producto</th>
+        <th>Precio Compra</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% productos.forEach(producto => { %>
+        <tr>
+          <td><%= producto.nombreVendedor %></td>
+          <td><%= producto.nombreComprador %></td>
+          <td><%= producto.descripcionProducto %></td>
+          <td><%= producto.precioCompra %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html>
