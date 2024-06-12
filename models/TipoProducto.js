@@ -5,17 +5,29 @@ class TipoProducto extends Model {}
 
 TipoProducto.init({
   idTipoProducto: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
     autoIncrement: true,
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true
   },
   descripcionProducto: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+    type: DataTypes.STRING(500),
+    allowNull: false
+  }
 }, {
   sequelize,
-  modelName: 'TipoProducto',
+  tableName: 'tipoproducto',
+  timestamps: false,
+  indexes: [
+    {
+      name: "PRIMARY",
+      unique: true,
+      using: "BTREE",
+      fields: [
+        { name: "idTipoProducto" },
+      ]
+    },
+  ]
 });
 
 module.exports = TipoProducto;

@@ -4,46 +4,61 @@ const sequelize = require('../config/database');
 class Producto extends Model {}
 
 Producto.init({
-  idProducto: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  nombreProducto: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   numeroVendedor: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Vendedors',
-      key: 'numeroVendedor',
-    },
+      model: 'vendedor',
+      key: 'numeroVendedor'
+    }
   },
   idComprador: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'Compradors',
-      key: 'idComprador',
-    },
+      model: 'comprador',
+      key: 'idComprador'
+    }
   },
   idTipoProducto: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: 'TipoProductos',
-      key: 'idTipoProducto',
-    },
+      model: 'tipoproducto',
+      key: 'idTipoProducto'
+    }
   },
   precioCompra: {
-    type: DataTypes.FLOAT,
-    allowNull: false,
-  },
+    type: DataTypes.INTEGER,
+    allowNull: false
+  }
 }, {
   sequelize,
-  modelName: 'Producto',
+  tableName: 'producto',
+  timestamps: false,
+  indexes: [
+    {
+      name: "fk_comprador",
+      using: "BTREE",
+      fields: [
+        { name: "idComprador" },
+      ]
+    },
+    {
+      name: "fk_vendedor",
+      using: "BTREE",
+      fields: [
+        { name: "numeroVendedor" },
+      ]
+    },
+    {
+      name: "fk_tipoproducto",
+      using: "BTREE",
+      fields: [
+        { name: "idTipoProducto" },
+      ]
+    },
+  ]
 });
 
 module.exports = Producto;

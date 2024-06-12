@@ -5,17 +5,29 @@ class Vendedor extends Model {}
 
 Vendedor.init({
   numeroVendedor: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
     autoIncrement: true,
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true
   },
   nombreVendedor: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+    type: DataTypes.STRING(200),
+    allowNull: false
+  }
 }, {
   sequelize,
-  modelName: 'Vendedor',
+  tableName: 'vendedor',
+  timestamps: false,
+  indexes: [
+    {
+      name: "PRIMARY",
+      unique: true,
+      using: "BTREE",
+      fields: [
+        { name: "numeroVendedor" },
+      ]
+    },
+  ]
 });
 
 module.exports = Vendedor;
