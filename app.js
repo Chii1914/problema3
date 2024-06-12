@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const sequelize = require('./config/database');
-
+const morgan = require('morgan');
 // Importar rutas
 const vendedorRoutes = require('./routes/vendedorRoutes');
 const compradorRoutes = require('./routes/compradorRoutes');
@@ -10,6 +10,8 @@ const productoRoutes = require('./routes/productoRoutes');
 app.use(express.json());
 
 // Usar rutas
+app.use(morgan('tiny'));
+
 app.use('/api/vendedores', vendedorRoutes);
 app.use('/api/compradores', compradorRoutes);
 app.use('/api/productos', productoRoutes);
