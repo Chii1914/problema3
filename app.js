@@ -8,7 +8,7 @@ const vendedorRoutes = require('./routes/vendedorRoutes');
 const compradorRoutes = require('./routes/compradorRoutes');
 const productoRoutes = require('./routes/productoRoutes');
 const tipoproductoRoutes = require('./routes/tipoProductoRoutes');
-const PORT = process.env.PORT || 6969;
+const PORT = process.env.PORT || 4001;
 
 
 app.use(express.json());

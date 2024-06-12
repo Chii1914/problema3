@@ -36,7 +36,7 @@
   <script>
     // Obtener los datos de los vendedores y llenar la tabla
     function fetchVendedores() {
-      fetch('http://localhost:6969/api/vendedores')
+      fetch('http://localhost:4001/api/vendedores')
         .then(response => response.json())
         .then(vendedores => {
           const table = document.getElementById('vendedores-table');
@@ -73,7 +73,7 @@
       e.preventDefault();
       const nombreVendedor = document.getElementById('nombreVendedor').value;
 
-      fetch('http://localhost:6969/api/vendedores', {
+      fetch('http://localhost:4001/api/vendedores', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -92,7 +92,7 @@
     function editVendedor(id, nombre) {
       const newName = prompt('Ingrese el nuevo nombre del vendedor:', nombre);
       if (newName) {
-        fetch(`http://localhost:6969/api/vendedores/${id}`, {
+        fetch(`http://localhost:4001/api/vendedores/${id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -107,7 +107,7 @@
     // Función para eliminar un vendedor
     function deleteVendedor(id) {
       if (confirm('¿Está seguro de que desea eliminar este vendedor?')) {
-        fetch(`http://localhost:6969/api/vendedores/${id}`, {
+        fetch(`http://localhost:4001/api/vendedores/${id}`, {
           method: 'DELETE'
         })
         .then(() => fetchVendedores())
