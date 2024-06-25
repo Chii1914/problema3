@@ -1,47 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lista de Productos</title>
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    table, th, td {
-      border: 1px solid black;
-    }
-    th, td {
-      padding: 8px;
-      text-align: left;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-  </style>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
-  <h1>Productos</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Nombre Vendedor</th>
-        <th>Nombre Comprador</th>
-        <th>Descripción Producto</th>
-        <th>Precio Compra</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% productos.forEach(producto => { %>
+  <div class="container mt-5">
+    <h1 class="mb-4">Productos</h1>
+    <table class="table table-bordered">
+      <thead class="thead-dark">
         <tr>
-          <td><%= producto.nombreVendedor %></td>
-          <td><%= producto.nombreComprador %></td>
-          <td><%= producto.descripcionProducto %></td>
-          <td><%= producto.precioCompra %></td>
+          <th>Nombre Vendedor</th>
+          <th>Nombre Comprador</th>
+          <th>Descripción Producto</th>
+          <th>Precio Compra</th>
+          <th>Acciones</th>
         </tr>
-      <% }) %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% productos.forEach(producto=> { %>
+          <tr>
+            <td>
+              <%= producto.nombreVendedor %>
+            </td>
+            <td>
+              <%= producto.nombreComprador %>
+            </td>
+            <td>
+              <%= producto.descripcionProducto %>
+            </td>
+            <td>
+              <%= producto.precioCompra %>
+            </td>
+            <td>
+              <button class="btn btn-danger btn-sm"
+                onclick="deleteProduct(<%= producto.idTipoProducto %>, '<%= producto.numeroVendedor %>', '<%= producto.idComprador %>', <%= producto.precioCompra %>)">Eliminar</button>
+              <button class="btn btn-warning btn-sm"
+                onclick="openUpdateModal('<%= producto.idComprador %>', '<%= producto.numeroVendedor %>', '<%= producto.idTipoProducto %>', '<%= producto.precioCompra %>')">Actualizar</button>
+
+            </td>
+          </tr>
+          <% }) %>
+      </tbody>
+    </table>
+
+    <h2 class="mt-5">Agregar Producto</h2>
+    <form id="addProductForm" class="form-inline">
+      <div class="form-group mb-2">
+        <label for="idComprador" class="sr-only">Nombre Comprador:</label>
+        <select class="form-control" id="idComprador" name="idComprador" required>
+          <% compradores.forEach(comprador=> { %>
+            <option value="<%= comprador.idComprador %>">
+              <%= comprador.nombreComprador %>
+            </option>
+            <% }) %>
+        </select>
+      </div>
+      <div class="form-group mx-sm-3 mb-2">
+        <label for="numeroVendedor" class="sr-only">Nombre Vendedor:</label>
+        <select class="form-control" id="numeroVendedor" name="numeroVendedor" required>
+          <% vendedores.forEach(vendedor=> { %>
+            <option value="<%= vendedor.numeroVendedor %>">
+              <%= vendedor.nombreVendedor %>
+            </option>
+            <% }) %>
+        </select>
+      </div>
+      <div class="form-group mx-sm-3 mb-2">
+        <label for="idTipoProducto" class="sr-only">Descripción Producto:</label>
+        <select class="form-control" id="idTipoProducto" name="idTipoProducto" required>
+          <% tipoProductos.forEach(tipoProducto=> { %>
+            <option value="<%= tipoProducto.idTipoProducto %>">
+              <%= tipoProducto.descripcionProducto %>
+            </option>
+            <% }) %>
+        </select>
+      </div>
+      <div class="form-group mx-sm-3 mb-2">
+        <label for="precioCompra" class="sr-only">Precio Compra:</label>
+        <input type="number" class="form-control" id="precioCompra" name="precioCompra" placeholder="Precio Compra"
+          required>
+      </div>
+      <button type="submit" class="btn btn-primary mb-2">Agregar</button>
+    </form>
+  </div>
+
+  <!-- The Modal -->
+  <div id="updateModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Actualizar Producto</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="updateProductForm">
+            <input type="hidden" id="updateIdProducto">
+            <input type="hidden" id="oldIdComprador">
+            <input type="hidden" id="oldNumeroVendedor">
+            <input type="hidden" id="oldIdTipoProducto">
+            <input type="hidden" id="oldPrecioCompra">
+            <div class="form-group">
+              <label for="updateIdComprador">Nombre Comprador:</label>
+              <select class="form-control" id="updateIdComprador" name="updateIdComprador" required>
+                <% compradores.forEach(comprador=> { %>
+                  <option value="<%= comprador.idComprador %>">
+                    <%= comprador.nombreComprador %>
+                  </option>
+                  <% }) %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="updateNumeroVendedor">Nombre Vendedor:</label>
+              <select class="form-control" id="updateNumeroVendedor" name="updateNumeroVendedor" required>
+                <% vendedores.forEach(vendedor=> { %>
+                  <option value="<%= vendedor.numeroVendedor %>">
+                    <%= vendedor.nombreVendedor %>
+                  </option>
+                  <% }) %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="updateIdTipoProducto">Descripción Producto:</label>
+              <select class="form-control" id="updateIdTipoProducto" name="updateIdTipoProducto" required>
+                <% tipoProductos.forEach(tipoProducto=> { %>
+                  <option value="<%= tipoProducto.idTipoProducto %>">
+                    <%= tipoProducto.descripcionProducto %>
+                  </option>
+                  <% }) %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="updatePrecioCompra">Precio Compra:</label>
+              <input type="number" class="form-control" id="updatePrecioCompra" name="updatePrecioCompra" required>
+            </div>
+            <button type="submit" class="btn btn-warning">Actualizar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    document.getElementById('addProductForm').addEventListener('submit', async function (event) {
+      event.preventDefault();
+      const idComprador = document.getElementById('idComprador').value;
+      const numeroVendedor = document.getElementById('numeroVendedor').value;
+      const idTipoProducto = document.getElementById('idTipoProducto').value;
+      const precioCompra = document.getElementById('precioCompra').value;
+
+      try {
+        const response = await fetch('http://localhost:4001/api/productos', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ idComprador, numeroVendedor, idTipoProducto, precioCompra }),
+        });
+
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          console.error('Error adding product');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+
+    async function deleteProduct(id, numeroVendedor, idComprador, precioCompra) {
+      console.log(id, numeroVendedor, idComprador, precioCompra);
+      try {
+        const response = await fetch(`http://localhost:4001/api/productos/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id, numeroVendedor, idComprador, precioCompra }),
+        });
+
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          console.error('Error deleting product');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function openUpdateModal(idComprador, numeroVendedor, idTipoProducto, precioCompra) {
+      // Set the values of the input fields in the modal using jQuery
+      $('#inputIdComprador').val(idComprador);
+      $('#inputNumeroVendedor').val(numeroVendedor);
+      $('#inputIdTipoProducto').val(idTipoProducto);
+      $('#updatePrecioCompra').val(precioCompra);
+
+      document.getElementById('oldIdComprador').value = idComprador;
+      document.getElementById('oldNumeroVendedor').value = numeroVendedor;
+      document.getElementById('oldIdTipoProducto').value = idTipoProducto;
+      document.getElementById('oldPrecioCompra').value = precioCompra;
+
+      // Assuming you're using Bootstrap's modal
+      $('#updateModal').modal('show');
+    }
+
+    document.getElementById('updateProductForm').addEventListener('submit', async function (event) {
+      event.preventDefault();
+      const idProducto = document.getElementById('updateIdProducto').value;
+      const idComprador = document.getElementById('updateIdComprador').value;
+      const numeroVendedor = document.getElementById('updateNumeroVendedor').value;
+      const idTipoProducto = document.getElementById('updateIdTipoProducto').value;
+      const precioCompra = document.getElementById('updatePrecioCompra').value;
+
+      // Get the old values
+      const oldIdComprador = document.getElementById('oldIdComprador').value;
+      const oldNumeroVendedor = document.getElementById('oldNumeroVendedor').value;
+      const oldIdTipoProducto = document.getElementById('oldIdTipoProducto').value;
+      const oldPrecioCompra = document.getElementById('oldPrecioCompra').value;
+
+      console.log("new values: ", idComprador, numeroVendedor, idTipoProducto, precioCompra);
+      console.log("old values: ", oldIdComprador, oldNumeroVendedor, oldIdTipoProducto, oldPrecioCompra);
+      try {
+        const response = await fetch(`http://localhost:4001/api/productos/${oldIdComprador}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ idComprador, numeroVendedor, idTipoProducto, precioCompra, oldIdComprador, oldNumeroVendedor, oldIdTipoProducto, oldPrecioCompra }),
+        });
+
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          console.error('Error updating product');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  </script>
 </body>
+
 </html>

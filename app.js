@@ -8,6 +8,7 @@ const vendedorRoutes = require('./routes/vendedorRoutes');
 const compradorRoutes = require('./routes/compradorRoutes');
 const productoRoutes = require('./routes/productoRoutes');
 const tipoproductoRoutes = require('./routes/tipoProductoRoutes');
+
 const PORT = process.env.PORT || 4001;
 
 
@@ -24,9 +25,11 @@ app.use('/api/tipoProducto', tipoproductoRoutes);
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
+
 app.get('/', (req, res) => {
   res.render('index', { title: 'My EJS Page', message: 'Hello, EJS!' });
 });
+
 app.get('/productos', async (req, res) => {
   try {
     const [productosResponse, compradoresResponse, vendedoresResponse, tipoProductoResponse] = await Promise.all([
@@ -54,7 +57,12 @@ app.get('/productos', async (req, res) => {
       };
     });
 
-    res.render('productos', { productos: productosConNombresYDescripcion });
+    res.render('productos', {
+      productos: productosConNombresYDescripcion,
+      compradores,
+      vendedores,
+      tipoProductos
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send('Error fetching data');

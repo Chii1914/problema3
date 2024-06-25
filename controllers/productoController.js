@@ -1,3 +1,4 @@
+const { where } = require('sequelize');
 const Producto = require('../models/Producto');
 
 exports.getAllProductos = async (req, res) => {
@@ -20,24 +21,58 @@ exports.createProducto = async (req, res) => {
 
 exports.updateProducto = async (req, res) => {
   try {
-    const producto = await Producto.findByPk(req.params.id);
+    // Extract new and old values from the request body
+    const { idComprador, numeroVendedor, idTipoProducto, precioCompra, oldIdComprador, oldNumeroVendedor, oldIdTipoProducto, oldPrecioCompra } = req.body;
+    
+    // Find the old product using old values
+    const producto = await Producto.findOne({
+      where: {
+        numeroVendedor: oldNumeroVendedor,
+        idComprador: oldIdComprador,
+        idTipoProducto: oldIdTipoProducto,
+        precioCompra: oldPrecioCompra
+      }
+    });
+
+    // If product not found, return 404
     if (!producto) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
-    await producto.update(req.body);
-    res.json(producto);
+
+    // Destroy the old product
+    await producto.destroy();
+
+    // Create a new product with the updated values
+    const newProducto = await Producto.create({
+      numeroVendedor,
+      idComprador,
+      idTipoProducto,
+      precioCompra
+    });
+
+    // Respond with the newly created product
+    res.json(newProducto);
   } catch (error) {
+    // Handle errors and respond with error message
     res.status(400).json({ error: error.message });
   }
 };
 
+
 exports.deleteProducto = async (req, res) => {
   try {
-    const producto = await Producto.findByPk(req.params.id);
-    if (!producto) {
+    console.log(req.body)
+    const result = await Producto.destroy({
+      where: {
+        numeroVendedor: req.body.numeroVendedor, 
+        idComprador: req.body.idComprador, 
+        idTipoProducto: req.body.id, 
+        precioCompra: req.body.precioCompra
+      }
+    });
+    if (result === 0) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
-    await producto.destroy();
     res.status(204).json();
   } catch (error) {
     res.status(500).json({ error: error.message });
